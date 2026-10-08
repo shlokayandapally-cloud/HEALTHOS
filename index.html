@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthOS — Personal Health Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f7f8;--card:#fff;--ink:#17212b;--muted:#71808c;
+  --line:#e4e9ed;--accent:#176b87;--accent2:#54a88a;--soft:#e8f4f1;
+  --danger:#c95d5d;--warning:#b78335;--shadow:0 18px 50px rgba(25,45,60,.08)
+}
+body{font-family:"DM Sans",sans-serif;background:#101820;color:var(--ink);overflow:hidden}
+.deck{width:100vw;height:100vh;position:relative}
+.slide{position:absolute;inset:0;display:none;background:var(--bg);padding:42px 6vw 70px;overflow:auto}
+.slide.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:.2;transform:translateX(12px)}to{opacity:1;transform:none}}
+h1,h2,h3{font-family:Manrope,sans-serif}
+h1{font-size:clamp(42px,6vw,78px);line-height:1.02;letter-spacing:-3px}
+h2{font-size:clamp(30px,4vw,48px);letter-spacing:-2px}
+h3{font-size:18px}
+p{color:var(--muted);line-height:1.55}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.kicker{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.logo{font-weight:800;font-family:Manrope;font-size:18px}
+.logo span{color:var(--accent2)}
+.badge{padding:8px 12px;border:1px solid var(--line);background:#fff;border-radius:999px;font-size:12px;color:var(--muted)}
+.hero{height:100%;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:60px}
+.hero p{font-size:19px;max-width:590px;margin:24px 0}
+.hero-card{background:#fff;border:1px solid var(--line);border-radius:30px;padding:24px;box-shadow:var(--shadow);transform:rotate(2deg)}
+.mini-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.avatar{width:42px;height:42px;border-radius:14px;background:var(--soft);display:grid;place-items:center;color:var(--accent);font-weight:800}
+.statgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat{padding:18px;border:1px solid var(--line);border-radius:18px}
+.stat small{color:var(--muted);display:block;margin-bottom:8px}.stat b{font-size:25px}
+.pill{display:inline-flex;padding:7px 10px;border-radius:999px;background:var(--soft);color:var(--accent);font-size:12px;font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:25px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:25px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 8px 25px rgba(30,50,60,.04)}
+.card p{font-size:14px;margin-top:8px}
+.feature{display:flex;gap:15px;align-items:flex-start}.icon{width:42px;height:42px;border-radius:13px;background:var(--soft);display:grid;place-items:center;font-size:20px;flex:none}
+.mock{background:#fff;border:1px solid var(--line);border-radius:25px;box-shadow:var(--shadow);overflow:hidden}
+.appbar{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.appbody{display:grid;grid-template-columns:180px 1fr;min-height:430px}
+.sidebar{border-right:1px solid var(--line);padding:15px}
+.nav{padding:10px 12px;border-radius:10px;margin-bottom:5px;font-size:12px;color:var(--muted);cursor:pointer}
+.nav.active,.nav:hover{background:var(--soft);color:var(--accent);font-weight:700}
+.content{padding:22px}
+.dashstats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.dashstat{padding:14px;border:1px solid var(--line);border-radius:15px}.dashstat span{font-size:11px;color:var(--muted)}.dashstat strong{display:block;font-size:20px;margin-top:4px}
+.chart{height:145px;display:flex;align-items:flex-end;gap:10px;padding:18px 5px 5px;border-bottom:1px solid var(--line)}
+.bar{flex:1;border-radius:7px 7px 2px 2px;background:var(--accent2);opacity:.75}
+.list{margin-top:15px}.row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--line);font-size:13px}.row:last-child{border:0}
+button{font:inherit;border:0;cursor:pointer}
+.primary{background:var(--accent);color:white;padding:11px 15px;border-radius:11px;font-weight:700}
+.secondary{background:#eef3f5;color:var(--ink);padding:11px 15px;border-radius:11px;font-weight:700}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.tag{font-size:11px;padding:5px 8px;border-radius:8px;background:#f0f3f4;color:var(--muted)}
+.flow{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:35px;flex-wrap:wrap}
+.flowbox{background:#fff;border:1px solid var(--line);padding:18px 20px;border-radius:17px;text-align:center;min-width:135px}.arrow{color:var(--accent);font-size:22px}
+.timeline{position:relative;margin-top:25px;padding-left:28px}.timeline:before{content:"";position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:#d8e2e5}
+.event{position:relative;margin-bottom:20px}.dot{position:absolute;left:-25px;top:4px;width:12px;height:12px;background:var(--accent2);border-radius:50%;border:3px solid var(--bg)}
+.event b{font-size:14px}.event p{font-size:12px;margin-top:3px}
+.ai{background:#17242c;color:#e9f2f4;border-radius:20px;padding:22px}.ai p{color:#bdcbd0}.bubble{padding:12px 14px;border-radius:15px;margin-top:10px;background:#22343e}.bubble.user{background:#27687a;margin-left:18%}
+.footer{position:fixed;left:0;right:0;bottom:0;height:52px;padding:0 6vw;display:flex;align-items:center;justify-content:space-between;background:rgba(245,247,248,.94);border-top:1px solid var(--line);z-index:10}
+.progress{height:3px;background:#dfe7e9;position:absolute;left:0;top:0;width:100%}.progress i{display:block;height:100%;background:var(--accent);width:0}
+.controls{display:flex;gap:7px}.controls button{width:35px;height:35px;border:1px solid var(--line);background:#fff;border-radius:10px}
+.slide-no{font-size:12px;color:var(--muted)}
+.upload{border:2px dashed #cddbdd;padding:35px;border-radius:18px;text-align:center;background:#fbfdfd;cursor:pointer}
+.upload input{display:none}
+.modal{display:none;position:fixed;inset:0;background:rgba(15,28,35,.55);z-index:30;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}.modalbox{background:#fff;width:min(500px,100%);border-radius:24px;padding:24px}
+.field{margin:12px 0}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.field input,.field select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px}
+@media(max-width:850px){.hero,.grid2{grid-template-columns:1fr}.appbody{grid-template-columns:1fr}.sidebar{display:none}.dashstats{grid-template-columns:repeat(2,1fr)}.hero-card{display:none}.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide active">
+  <div class="hero">
+    <div>
+      <div class="kicker">Personal Health Intelligence</div>
+      <h1>HealthOS</h1>
+      <p>One private place to organize health reports, medicines, supplements, vitals and personal health history — and turn scattered information into something understandable.</p>
+      <div class="actions"><button class="primary" onclick="go(1)">See how it works →</button><span class="badge">Interactive HTML presentation</span></div>
+    </div>
+    <div class="hero-card">
+      <div class="mini-head"><div class="logo">Health<span>OS</span></div><div class="avatar">S</div></div>
+      <div class="statgrid">
+        <div class="stat"><small>Reports</small><b>12</b></div>
+        <div class="stat"><small>Medicines</small><b>3</b></div>
+        <div class="stat"><small>Vitals</small><b>28</b></div>
+        <div class="stat"><small>Timeline</small><b>19</b></div>
+      </div>
+      <div class="card" style="margin-top:12px"><span class="pill">AI summary</span><p style="margin-top:10px">Your health records are organized by date, category and measurable parameters.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">01 · The problem</div><h2>Health information is everywhere.</h2></div><span class="badge">Why this product?</span></div>
+  <div class="grid3">
+    <div class="card feature"><div class="icon">📄</div><div><h3>Scattered reports</h3><p>PDFs, photos and lab reports sit in different folders and chats.</p></div></div>
+    <div class="card feature"><div class="icon">💊</div><div><h3>Medication confusion</h3><p>It is difficult to remember what is current, temporary, completed or as-needed.</p></div></div>
+    <div class="card feature"><div class="icon">📈</div><div><h3>No long-term view</h3><p>Individual reports show a result, but trends across months are hard to see.</p></div></div>
+  </div>
+  <div class="flow"><div class="flowbox">Reports</div><div class="arrow">+</div><div class="flowbox">Medicines</div><div class="arrow">+</div><div class="flowbox">Vitals</div><div class="arrow">→</div><div class="flowbox"><b>One timeline</b></div></div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">02 · The solution</div><h2>A personal health dashboard.</h2></div></div>
+  <div class="grid2">
+    <div class="card"><div class="feature"><div class="icon">🗂️</div><div><h3>Organize</h3><p>Upload and categorize health documents, medicines, supplements and vitals.</p></div></div></div>
+    <div class="card"><div class="feature"><div class="icon">📊</div><div><h3>Understand</h3><p>See trends, compare reports and view your health information over time.</p></div></div></div>
+    <div class="card"><div class="feature"><div class="icon">🤖</div><div><h3>Ask your records</h3><p>Search your own uploaded information in natural language.</p></div></div></div>
+    <div class="card"><div class="feature"><div class="icon">🔒</div><div><h3>Keep it private</h3><p>Designed around personal control and sensitive health-data handling.</p></div></div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">03 · Product demo</div><h2>The dashboard</h2></div><span class="badge">Click the navigation</span></div>
+  <div class="mock">
+    <div class="appbar"><div class="logo">Health<span>OS</span></div><div><span class="tag">Good morning</span> <b>Shloka</b></div></div>
+    <div class="appbody">
+      <div class="sidebar">
+        <div class="nav active" onclick="appTab(this,'overview')">⌂ Overview</div>
+        <div class="nav" onclick="appTab(this,'reports')">▣ Reports</div>
+        <div class="nav" onclick="appTab(this,'meds')">💊 Medicines</div>
+        <div class="nav" onclick="appTab(this,'vitals')">⌁ Vitals</div>
+        <div class="nav" onclick="appTab(this,'timeline')">◷ Timeline</div>
+      </div>
+      <div class="content" id="appContent">
+        <div class="dashstats">
+          <div class="dashstat"><span>Reports</span><strong>12</strong></div>
+          <div class="dashstat"><span>Current meds</span><strong>3</strong></div>
+          <div class="dashstat"><span>Vitals logged</span><strong>28</strong></div>
+          <div class="dashstat"><span>Documents</span><strong>17</strong></div>
+        </div>
+        <div class="grid2" style="margin-top:14px">
+          <div class="card"><h3>Health activity</h3><div class="chart"><i class="bar" style="height:45%"></i><i class="bar" style="height:62%"></i><i class="bar" style="height:38%"></i><i class="bar" style="height:78%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:90%"></i><i class="bar" style="height:68%"></i></div><p>Last 7 recorded events</p></div>
+          <div class="card"><h3>Today's medicines</h3><div class="list"><div class="row"><span>Medicine A · 9:00 AM</span><span class="pill">Taken</span></div><div class="row"><span>Medicine B · 8:00 PM</span><span class="tag">Upcoming</span></div><div class="row"><span>As-needed medicine</span><span class="tag">PRN</span></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">04 · Reports</div><h2>Upload → extract → organize</h2></div></div>
+  <div class="grid2">
+    <div class="card">
+      <label class="upload"><input type="file" accept=".pdf,.png,.jpg,.jpeg" onchange="fakeUpload(this)">📄<br><b>Drop a report here</b><p>PDF, JPG or PNG</p></label>
+      <div id="uploadStatus" class="tag" style="display:block;margin-top:12px;text-align:center">Try uploading a file to see the demo</div>
+    </div>
+    <div class="card">
+      <h3>What the application stores</h3>
+      <div class="list">
+        <div class="row"><span>Test / parameter</span><b>Value</b></div>
+        <div class="row"><span>Reference range</span><span class="tag">Captured</span></div>
+        <div class="row"><span>Unit</span><span class="tag">Captured</span></div>
+        <div class="row"><span>Date + lab</span><span class="tag">Captured</span></div>
+      </div>
+      <p style="margin-top:12px">OCR/extraction should always show a confidence indicator and allow the user to correct extracted information.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">05 · Trends</div><h2>See change over time.</h2></div></div>
+  <div class="mock" style="padding:24px">
+    <div class="mini-head"><div><h3>Parameter trend</h3><p>Example visualization using stored records</p></div><span class="pill">12 months</span></div>
+    <svg viewBox="0 0 900 270" width="100%" height="270" preserveAspectRatio="none">
+      <line x1="40" y1="220" x2="880" y2="220" stroke="#dfe6e8"/><line x1="40" y1="145" x2="880" y2="145" stroke="#e8edef"/><line x1="40" y1="70" x2="880" y2="70" stroke="#e8edef"/>
+      <polyline points="40,185 150,165 260,175 370,125 480,140 590,95 700,115 810,72 880,90" fill="none" stroke="#176b87" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="40" cy="185" r="6" fill="#176b87"/><circle cx="370" cy="125" r="6" fill="#176b87"/><circle cx="590" cy="95" r="6" fill="#176b87"/><circle cx="810" cy="72" r="6" fill="#176b87"/>
+    </svg>
+    <div class="grid3"><div class="stat"><small>Latest</small><b>72</b></div><div class="stat"><small>Previous</small><b>76</b></div><div class="stat"><small>Records</small><b>18</b></div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">06 · Medicines</div><h2>Flexible medication tracking.</h2></div><button class="primary" onclick="openModal()">＋ Add medicine</button></div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Current & scheduled</h3>
+      <div class="list">
+        <div class="row"><div><b>Medicine A</b><br><span class="tag">Regular · 9:00 AM</span></div><span class="pill">Active</span></div>
+        <div class="row"><div><b>Medicine B</b><br><span class="tag">Temporary · evening</span></div><span class="pill">Active</span></div>
+        <div class="row"><div><b>Medicine C</b><br><span class="tag">As-needed / PRN</span></div><span class="tag">Optional</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Status logic</h3>
+      <div class="flow" style="margin-top:15px"><span class="pill">Current</span><span>→</span><span class="tag">Temporary</span><span>→</span><span class="tag">Completed</span></div>
+      <div class="flow" style="margin-top:14px"><span class="pill">As-needed</span><span>→</span><span class="tag">Taken / skipped</span></div>
+      <p style="margin-top:20px">The user can add multiple medicines and record frequency, timing, duration and notes. The app records information; it does not prescribe or change medication.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">07 · Supplements & vitals</div><h2>Track the rest of the picture.</h2></div></div>
+  <div class="grid2">
+    <div class="card"><h3>Supplements</h3><div class="list"><div class="row"><span>Supplement A</span><span class="tag">Daily</span></div><div class="row"><span>Supplement B</span><span class="tag">Weekly</span></div><div class="row"><span>Add another</span><button class="secondary">＋ Add</button></div></div></div>
+    <div class="card"><h3>Vitals</h3><div class="grid2" style="margin-top:14px"><div class="stat"><small>Blood pressure</small><b>118/76</b></div><div class="stat"><small>Heart rate</small><b>72</b></div><div class="stat"><small>Weight</small><b>—</b></div><div class="stat"><small>SpO₂</small><b>—</b></div></div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">08 · AI layer</div><h2>Ask your own health records.</h2></div></div>
+  <div class="grid2">
+    <div class="ai">
+      <span class="pill">AI assistant</span>
+      <div class="bubble user">Show me my recent report history.</div>
+      <div class="bubble">I found 4 uploaded reports in your selected date range. I can summarize the documented results, compare dates, and point you to the original reports.</div>
+      <div class="bubble user">Compare the last two reports.</div>
+      <div class="bubble">Here is a side-by-side comparison of the recorded parameters. Review the original reports for the authoritative values.</div>
+    </div>
+    <div class="card"><h3>What makes it useful?</h3><div class="list"><div class="row"><span>Natural-language search</span><span>✓</span></div><div class="row"><span>Cross-document retrieval</span><span>✓</span></div><div class="row"><span>Report comparison</span><span>✓</span></div><div class="row"><span>Diagnostic claims</span><span>✕</span></div></div><p style="margin-top:14px">AI is an explanation and retrieval layer, not a doctor. The product should clearly distinguish stored facts from interpretation.</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">09 · Timeline</div><h2>Your health story in one place.</h2></div></div>
+  <div class="grid2">
+    <div class="card">
+      <div class="timeline">
+        <div class="event"><div class="dot"></div><b>Today · Medication logged</b><p>Regular medicine marked as taken.</p></div>
+        <div class="event"><div class="dot"></div><b>Yesterday · Vital added</b><p>Blood pressure record added manually.</p></div>
+        <div class="event"><div class="dot"></div><b>Sep 18 · Lab report</b><p>New PDF uploaded and organized.</p></div>
+        <div class="event"><div class="dot"></div><b>Aug 02 · Supplement</b><p>Supplement entry created.</p></div>
+      </div>
+    </div>
+    <div class="card"><h3>Search everything</h3><p>Search by date, report, medicine, supplement, parameter or keyword.</p><div class="actions"><button class="secondary">🔎 Search records</button><button class="secondary">📤 Export summary</button></div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">10 · Privacy</div><h2>Private by design.</h2></div></div>
+  <div class="grid3">
+    <div class="card feature"><div class="icon">🔐</div><div><h3>Access control</h3><p>User-controlled account access and session security.</p></div></div>
+    <div class="card feature"><div class="icon">🗃️</div><div><h3>Document vault</h3><p>Keep uploaded medical documents organized rather than scattered.</p></div></div>
+    <div class="card feature"><div class="icon">🧾</div><div><h3>Auditability</h3><p>Show when information was added, edited or imported.</p></div></div>
+  </div>
+  <div class="card" style="margin-top:20px"><b>Important product principle:</b><p>This prototype is for organization and education. A real deployment would require strong security, appropriate consent, data-protection controls and careful medical-safety review.</p></div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">11 · How it is built</div><h2>From HTML prototype to real product.</h2></div></div>
+  <div class="flow">
+    <div class="flowbox"><b>Frontend</b><br><small>HTML · CSS · JS</small></div><div class="arrow">→</div>
+    <div class="flowbox"><b>Backend</b><br><small>Python / Flask</small></div><div class="arrow">→</div>
+    <div class="flowbox"><b>Database</b><br><small>SQLite / PostgreSQL</small></div><div class="arrow">→</div>
+    <div class="flowbox"><b>AI layer</b><br><small>OCR + retrieval</small></div>
+  </div>
+  <div class="grid3">
+    <div class="card"><h3>Phase 1</h3><p>Interactive HTML prototype and UX validation.</p></div>
+    <div class="card"><h3>Phase 2</h3><p>Real login, database, file storage and report processing.</p></div>
+    <div class="card"><h3>Phase 3</h3><p>AI retrieval, analytics, reminders and secure deployment.</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="top"><div><div class="kicker">12 · Closing</div><h2>Health data should tell a story.</h2></div></div>
+  <div class="card" style="max-width:800px;margin-top:35px;padding:35px">
+    <h3 style="font-size:25px">The product loop</h3>
+    <div class="flow"><div class="flowbox">Upload</div><div class="arrow">→</div><div class="flowbox">Organize</div><div class="arrow">→</div><div class="flowbox">Track</div><div class="arrow">→</div><div class="flowbox">Understand</div><div class="arrow">→</div><div class="flowbox">Act</div></div>
+    <p style="margin-top:28px">A personal health operating system that turns disconnected records into a clear, searchable, longitudinal view.</p>
+  </div>
+</section>
+
+</div>
+
+<div class="footer">
+  <div class="progress"><i id="progress"></i></div>
+  <div class="slide-no" id="slideNo">1 / 13</div>
+  <div class="controls"><button onclick="prev()">←</button><button onclick="next()">→</button></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modalbox">
+    <div class="top"><h3>Add medicine</h3><button class="secondary" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>Medicine name</label><input id="medName" placeholder="e.g. Medicine A"></div>
+    <div class="field"><label>Dosage / instructions as prescribed</label><input placeholder="Enter prescribed details"></div>
+    <div class="field"><label>Type</label><select><option>Regular</option><option>Temporary</option><option>As-needed / PRN</option><option>One-time</option></select></div>
+    <div class="field"><label>Notes</label><input placeholder="Optional note"></div>
+    <button class="primary" onclick="saveMedicine()">Save medicine</button>
+    <p id="medSaved" style="margin-top:10px"></p>
+  </div>
+</div>
+
+<script>
+let current=0;
+const slides=[...document.querySelectorAll('.slide')];
+function render(){
+  slides.forEach((s,i)=>s.classList.toggle('active',i===current));
+  document.getElementById('slideNo').textContent=(current+1)+' / '+slides.length;
+  document.getElementById('progress').style.width=((current+1)/slides.length*100)+'%';
+}
+function go(n){current=Math.max(0,Math.min(slides.length-1,n));render()}
+function next(){go(current+1)}
+function prev(){go(current-1)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()} if(e.key==='ArrowLeft')prev()});
+function appTab(el,tab){
+ document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));el.classList.add('active');
+ const c=document.getElementById('appContent');
+ if(tab==='overview') c.innerHTML='<div class="dashstats"><div class="dashstat"><span>Reports</span><strong>12</strong></div><div class="dashstat"><span>Current meds</span><strong>3</strong></div><div class="dashstat"><span>Vitals logged</span><strong>28</strong></div><div class="dashstat"><span>Documents</span><strong>17</strong></div></div><div class="grid2" style="margin-top:14px"><div class="card"><h3>Health activity</h3><div class="chart"><i class="bar" style="height:45%"></i><i class="bar" style="height:62%"></i><i class="bar" style="height:38%"></i><i class="bar" style="height:78%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:90%"></i><i class="bar" style="height:68%"></i></div></div><div class="card"><h3>Today's medicines</h3><div class="list"><div class="row"><span>Medicine A</span><span class="pill">Taken</span></div><div class="row"><span>Medicine B</span><span class="tag">Upcoming</span></div></div></div></div>';
+ if(tab==='reports') c.innerHTML='<div class="card"><h3>Reports</h3><div class="actions"><button class="primary" onclick="fakeUpload()">＋ Upload report</button></div><div class="list"><div class="row"><span>Blood report · Sep 18</span><span class="pill">Processed</span></div><div class="row"><span>Health panel · Aug 02</span><span class="pill">Processed</span></div><div class="row"><span>Scan report · Jul 14</span><span class="tag">PDF</span></div></div></div>';
+ if(tab==='meds') c.innerHTML='<div class="card"><div class="mini-head"><h3>Medicines</h3><button class="primary" onclick="openModal()">＋ Add</button></div><div class="list"><div class="row"><span>Medicine A · Regular</span><span class="pill">Active</span></div><div class="row"><span>Medicine B · Temporary</span><span class="pill">Active</span></div><div class="row"><span>Medicine C · As-needed</span><span class="tag">PRN</span></div></div></div>';
+ if(tab==='vitals') c.innerHTML='<div class="grid2"><div class="stat"><small>Blood pressure</small><b>118/76</b></div><div class="stat"><small>Heart rate</small><b>72</b></div><div class="stat"><small>SpO₂</small><b>—</b></div><div class="stat"><small>Temperature</small><b>—</b></div></div>';
+ if(tab==='timeline') c.innerHTML='<div class="card"><h3>Recent timeline</h3><div class="timeline"><div class="event"><div class="dot"></div><b>Today · Medicine logged</b><p>Regular medicine recorded.</p></div><div class="event"><div class="dot"></div><b>Yesterday · Vital added</b><p>Blood pressure record.</p></div><div class="event"><div class="dot"></div><b>Sep 18 · Report uploaded</b><p>Lab PDF processed.</p></div></div></div>';
+}
+function fakeUpload(input){
+ const status=document.getElementById('uploadStatus');
+ if(status){status.style.display='block';status.textContent='⏳ Extracting report…';setTimeout(()=>{status.textContent='✓ Demo complete — 14 values extracted and organized.'},900)}
+}
+function openModal(){document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function saveMedicine(){
+ const name=document.getElementById('medName').value||'New medicine';
+ document.getElementById('medSaved').textContent='✓ '+name+' added to the demo tracker.';
+ setTimeout(closeModal,800)
+}
+render();
+</script>
+</body>
+</html>
