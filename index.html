@@ -293,40 +293,88 @@ button{font:inherit;border:0;cursor:pointer}
     <p id="medSaved" style="margin-top:10px"></p>
   </div>
 </div>
-
 <script>
-let current=0;
-const slides=[...document.querySelectorAll('.slide')];
-function render(){
-  slides.forEach((s,i)=>s.classList.toggle('active',i===current));
-  document.getElementById('slideNo').textContent=(current+1)+' / '+slides.length;
-  document.getElementById('progress').style.width=((current+1)/slides.length*100)+'%';
-}
-function go(n){current=Math.max(0,Math.min(slides.length-1,n));render()}
-function next(){go(current+1)}
-function prev(){go(current-1)}
-document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()} if(e.key==='ArrowLeft')prev()});
-function appTab(el,tab){
- document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));el.classList.add('active');
- const c=document.getElementById('appContent');
- if(tab==='overview') c.innerHTML='<div class="dashstats"><div class="dashstat"><span>Reports</span><strong>12</strong></div><div class="dashstat"><span>Current meds</span><strong>3</strong></div><div class="dashstat"><span>Vitals logged</span><strong>28</strong></div><div class="dashstat"><span>Documents</span><strong>17</strong></div></div><div class="grid2" style="margin-top:14px"><div class="card"><h3>Health activity</h3><div class="chart"><i class="bar" style="height:45%"></i><i class="bar" style="height:62%"></i><i class="bar" style="height:38%"></i><i class="bar" style="height:78%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:90%"></i><i class="bar" style="height:68%"></i></div></div><div class="card"><h3>Today's medicines</h3><div class="list"><div class="row"><span>Medicine A</span><span class="pill">Taken</span></div><div class="row"><span>Medicine B</span><span class="tag">Upcoming</span></div></div></div></div>';
- if(tab==='reports') c.innerHTML='<div class="card"><h3>Reports</h3><div class="actions"><button class="primary" onclick="fakeUpload()">＋ Upload report</button></div><div class="list"><div class="row"><span>Blood report · Sep 18</span><span class="pill">Processed</span></div><div class="row"><span>Health panel · Aug 02</span><span class="pill">Processed</span></div><div class="row"><span>Scan report · Jul 14</span><span class="tag">PDF</span></div></div></div>';
- if(tab==='meds') c.innerHTML='<div class="card"><div class="mini-head"><h3>Medicines</h3><button class="primary" onclick="openModal()">＋ Add</button></div><div class="list"><div class="row"><span>Medicine A · Regular</span><span class="pill">Active</span></div><div class="row"><span>Medicine B · Temporary</span><span class="pill">Active</span></div><div class="row"><span>Medicine C · As-needed</span><span class="tag">PRN</span></div></div></div>';
- if(tab==='vitals') c.innerHTML='<div class="grid2"><div class="stat"><small>Blood pressure</small><b>118/76</b></div><div class="stat"><small>Heart rate</small><b>72</b></div><div class="stat"><small>SpO₂</small><b>—</b></div><div class="stat"><small>Temperature</small><b>—</b></div></div>';
- if(tab==='timeline') c.innerHTML='<div class="card"><h3>Recent timeline</h3><div class="timeline"><div class="event"><div class="dot"></div><b>Today · Medicine logged</b><p>Regular medicine recorded.</p></div><div class="event"><div class="dot"></div><b>Yesterday · Vital added</b><p>Blood pressure record.</p></div><div class="event"><div class="dot"></div><b>Sep 18 · Report uploaded</b><p>Lab PDF processed.</p></div></div></div>';
-}
-function fakeUpload(input){
- const status=document.getElementById('uploadStatus');
- if(status){status.style.display='block';status.textContent='⏳ Extracting report…';setTimeout(()=>{status.textContent='✓ Demo complete — 14 values extracted and organized.'},900)}
-}
-function openModal(){document.getElementById('modal').classList.add('show')}
-function closeModal(){document.getElementById('modal').classList.remove('show')}
-function saveMedicine(){
- const name=document.getElementById('medName').value||'New medicine';
- document.getElementById('medSaved').textContent='✓ '+name+' added to the demo tracker.';
- setTimeout(closeModal,800)
-}
-render();
+document.addEventListener("DOMContentLoaded", function () {
+
+    const slides = document.querySelectorAll(".slide");
+    let currentSlide = 0;
+
+    function showSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+
+        slides.forEach(function (slide, i) {
+            if (i === index) {
+                slide.classList.add("active");
+                slide.style.display = "flex";
+                slide.style.opacity = "1";
+                slide.style.visibility = "visible";
+            } else {
+                slide.classList.remove("active");
+                slide.style.display = "none";
+                slide.style.opacity = "0";
+                slide.style.visibility = "hidden";
+            }
+        });
+
+        currentSlide = index;
+
+        const counter = document.querySelector(".slide-counter");
+        if (counter) {
+            counter.textContent = (currentSlide + 1) + " / " + slides.length;
+        }
+    }
+
+    function nextSlide() {
+        if (currentSlide < slides.length - 1) {
+            showSlide(currentSlide + 1);
+        }
+    }
+
+    function previousSlide() {
+        if (currentSlide > 0) {
+            showSlide(currentSlide - 1);
+        }
+    }
+
+    /* NEXT BUTTON */
+    const nextButton = document.querySelector(".controls button:last-child");
+
+    if (nextButton) {
+        nextButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            nextSlide();
+        });
+    }
+
+    /* PREVIOUS BUTTON */
+    const previousButton = document.querySelector(".controls button:first-child");
+
+    if (previousButton) {
+        previousButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            previousSlide();
+        });
+    }
+
+    /* KEYBOARD CONTROLS */
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key === "ArrowRight" || event.key === " " || event.key === "Enter") {
+            event.preventDefault();
+            nextSlide();
+        }
+
+        if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            previousSlide();
+        }
+    });
+
+    /* START PRESENTATION */
+    showSlide(0);
+
+});
 </script>
 </body>
 </html>
